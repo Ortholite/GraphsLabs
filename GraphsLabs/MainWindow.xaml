@@ -1,0 +1,443 @@
+﻿<Window x:Class="GraphsLabs.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GraphsLabs"
+		xmlns:dataGrid2D="http://gu.se/DataGrid2D"
+        mc:Ignorable="d"
+		MinWidth="770" MinHeight="605" Height="450" Width="800" WindowStartupLocation="CenterScreen"
+        Title="Вариант 1. Ковязин А. С., Шмаков Г. А. ИВТм-1302">
+	<Window.Resources>
+		<Style x:Key="DataGridStyle" TargetType="{x:Type DataGrid}">
+			<Setter Property="dataGrid2D:ItemsSource.Array2D" Value="{Binding Data2D}"/>
+			<Setter Property="dataGrid2D:ItemsSource.ColumnHeadersSource" Value="{Binding ColumnHeaders}"/>
+			<Setter Property="dataGrid2D:ItemsSource.RowHeadersSource" Value="{Binding RowHeaders}"/>
+			<Setter Property="Margin" Value="5"/>
+			<Setter Property="MaxHeight" Value="247"/>
+			<Setter Property="ColumnWidth" Value="auto"/>
+			<Setter Property="IsReadOnly" Value="True"/>
+			<Setter Property="CanUserAddRows" Value="False"/>
+			<Setter Property="CanUserDeleteRows" Value="False"/>
+			<Setter Property="CanUserResizeRows" Value="False"/>
+			<Setter Property="CanUserReorderColumns" Value="False"/>
+			<Setter Property="CanUserResizeColumns" Value="False"/>
+			<Setter Property="CanUserSortColumns" Value="False"/>
+			<Setter Property="SelectionMode" Value="Single"/>
+			<Setter Property="SelectionUnit" Value="Cell"/>
+		</Style>
+	</Window.Resources>
+
+	<TabControl Margin="0" Grid.Row="3">
+		<!--Лабораторная работа 1-->
+		<TabItem Header="Лаб 1">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Grid Grid.Column="0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<GroupBox Grid.Row="0" Header="Настройка графов:" Margin="5">
+						<StackPanel>
+							<TextBlock Margin="5" Text="Размерность матрицы смежности:"/>
+							<StackPanel Margin="5" Orientation="Horizontal">
+								<Slider Name="DimensionSlider" Width="170"
+							Minimum="5" Maximum="10" Value="5"
+							SmallChange="1" LargeChange="1"
+							TickFrequency="1" TickPlacement="TopLeft"
+							IsSnapToTickEnabled="True"/>
+								<TextBox Name="DimensionTextBox" Width="20" TextAlignment="Center"
+								 IsReadOnly="True"
+								 Text="{Binding ElementName=DimensionSlider, Path=Value}"/>
+							</StackPanel>
+							<Button Name="SetGraphsButton" Margin="5" Height="25"
+						Content="Сформировать графы" Click="SetGraphsButton_Click"/>
+						</StackPanel>
+					</GroupBox>
+					<GroupBox Grid.Row="1" Header="Выбор вершины:" Margin="5">
+						<StackPanel>
+							<TextBlock Margin="5" Text="Вершина xi:"/>
+							<StackPanel Margin="5" Orientation="Horizontal">
+								<Slider Name="VertexSlider" Width="170"
+							Minimum="1" Maximum="{Binding ElementName=DimensionSlider, Path=Value}" Value="1"
+							SmallChange="1" LargeChange="1"
+							TickFrequency="1" TickPlacement="TopLeft"
+							IsSnapToTickEnabled="True"/>
+								<TextBox Name="VertexTextBox" Width="20" TextAlignment="Center"
+								 IsReadOnly="True"
+								 Text="{Binding ElementName=VertexSlider, Path=Value}"/>
+							</StackPanel>
+						</StackPanel>
+					</GroupBox>
+					<GroupBox Grid.Row="2" Header="Полустепени исхода:" Margin="5">
+						<StackPanel>
+							<StackPanel Margin="5" Orientation="Horizontal">
+								<TextBlock Width="170"
+								   Text="{Binding ElementName=VertexSlider, Path=Value,
+									StringFormat='Для орграфа G1:   D0(x{0})   =  '}"/>
+								<TextBox Name="OutdegreeG1TextBox" Width="20" TextAlignment="Center"
+								 IsReadOnly="True"/>
+							</StackPanel>
+							<StackPanel Margin="5" Orientation="Horizontal">
+								<TextBlock Width="170"
+								   Text="{Binding ElementName=VertexSlider, Path=Value,
+									StringFormat='Для орграфа G2:   D0(x{0})   =  '}"/>
+								<TextBox Name="OutdegreeG2TextBox" Width="20" TextAlignment="Center"
+								 IsReadOnly="True"/>
+							</StackPanel>
+							<Button Name="CalculateOutdegreeButton" Height="25" Margin="5" Content="Рассчитать"
+							IsEnabled="False" Click="CalculateOutdegreeButton_Click"/>
+						</StackPanel>
+					</GroupBox>
+					<GroupBox Grid.Row="3" Header="Нахождение G1∪G2:" Margin="5">
+						<Button Name="GetG3Button" Margin="5" Content="Получить граф G3 = G1∪G2"
+						IsEnabled="False" Click="GetG3Button_Click"/>
+					</GroupBox>
+				</Grid>
+				<Grid Grid.Column="1">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center"
+					   Margin="5" Text="Граф G1"/>
+					<DataGrid Name="Graph1DataGrid" Grid.Row="1" Grid.Column="0"
+					  Style="{StaticResource DataGridStyle}"/>
+					<TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center"
+					   Margin="5" Text="Граф G2"/>
+					<DataGrid Name="Graph2DataGrid" Grid.Row="1" Grid.Column="1"
+					  Style="{StaticResource DataGridStyle}"/>
+					<TextBlock Grid.Row="2" Grid.Column="0"
+					   Grid.ColumnSpan="2" HorizontalAlignment="Center"
+					   Margin="5" Text="Граф G3 = G1∪G2"/>
+					<DataGrid Name="Graph3DataGrid" Grid.Row="3"
+					  Grid.Column="0" Grid.ColumnSpan="2"
+					  Style="{StaticResource DataGridStyle}"/>
+
+				</Grid>
+			</Grid>
+		</TabItem>
+		
+		<!--Лабораторная работа 2-->
+		<TabItem Header="Лаб 2">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<GroupBox Grid.Row="0" Header="Настройка графов:" Margin="5">
+						<StackPanel>
+							<TextBlock Margin="5" Text="Размерность матрицы смежности:"/>
+							<StackPanel Margin="5" Orientation="Horizontal">
+								<Slider Name="DimensionSlider2" Width="246"
+							Minimum="4" Maximum="8" Value="4"
+							SmallChange="1" LargeChange="1"
+							TickFrequency="1" TickPlacement="TopLeft"
+							IsSnapToTickEnabled="True"/>
+								<TextBox Name="DimensionTextBox2" Width="20" TextAlignment="Center"
+								 IsReadOnly="True"
+								 Text="{Binding ElementName=DimensionSlider2, Path=Value}"/>
+							</StackPanel>
+							<Button Name="SetGraphsButton2" Margin="5" Height="25"
+						Content="Сформировать граф" Click="SetGraphsButton_Click2"/>
+						</StackPanel>
+					</GroupBox>
+					<GroupBox Grid.Row="1" Header="Вершины с равными степенями исхода и захода:" Margin="5">
+						<TextBlock Text="" HorizontalAlignment="Left" Name="equals_text" Margin="5" VerticalAlignment="Top"
+								   Width="{Binding ElementName=SetGraphsButton2, Path=ActualWidth}"/>
+					</GroupBox>
+				</Grid>
+				<Grid Grid.Column="1">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center"
+					   Margin="5" Text="Матрица смежности" TextAlignment="Center"/>
+					<DataGrid Name="Graph1DataGrid2" Grid.Row="1" Grid.Column="0"
+					  Style="{StaticResource DataGridStyle}"/>
+					<TextBlock Grid.Row="2" HorizontalAlignment="Center"
+					   Margin="5" Text="Матрица инцедентности" TextAlignment="Center"/>
+					<DataGrid Name="Graph2DataGrid2" Grid.Row="3" Margin="5"
+					  Style="{StaticResource DataGridStyle}"/>
+				</Grid>
+			</Grid>
+		</TabItem>
+		
+		<!--Лабораторная работа 3-->
+		<TabItem Header="Лаб 3">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<GroupBox Grid.Row="0" Header="Настройка графов:" Margin="5">
+						<StackPanel>
+							<TextBlock Margin="5" Text="Размерность матрицы смежности:"/>
+							<StackPanel Margin="5" Orientation="Horizontal">
+								<Slider Name="DimensionSlider3" Width="170"
+									Minimum="5" Maximum="10" Value="3"
+									SmallChange="1" LargeChange="1"
+									TickFrequency="1" TickPlacement="TopLeft"
+									IsSnapToTickEnabled="True"/>
+								<TextBox Name="DimensionTextBox3" Width="20" TextAlignment="Center"
+								 IsReadOnly="True"
+								 Text="{Binding ElementName=DimensionSlider3, Path=Value}"/>
+							</StackPanel>
+							<Button Name="SetGraphsButton3" Margin="5" Height="25"
+								Content="Сформировать граф" Click="SetGraphsButton3_Click"/>
+						</StackPanel>
+					</GroupBox>
+					<GroupBox Grid.Row="1" Header="Граф полный?" Margin="5">
+						<TextBlock Text="" HorizontalAlignment="Left" Name="IsCompleteGraphTextBlock" Margin="5" VerticalAlignment="Top"
+								   Width="{Binding ElementName=SetGraphsButton3, Path=ActualWidth}"/>
+					</GroupBox>
+				</Grid>
+				<Grid Grid.Column="1">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center"
+					   Margin="5" Text="Матрица смежности" TextAlignment="Center"/>
+					<DataGrid Name="Graph1DataGrid3" Grid.Row="1" Grid.Column="0"
+					  Style="{StaticResource DataGridStyle}"/>
+				</Grid>
+			</Grid>
+		</TabItem>
+
+		<!--Лабораторная работа 4-->
+		<TabItem Header="Лаб 4">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Grid Grid.Column="0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<GroupBox Grid.Row="0" Header="Настройка:" Margin="5">
+						<StackPanel>
+							<RadioButton Name="SequentialRadioButton4" Content="Послед" IsChecked="True" Checked="RadioButtons4_Checked" Tag="SeqRadButt4"/>
+							<RadioButton Name="ParallelRadioButton4" Content="Параллел" IsChecked="False" Checked="RadioButtons4_Checked" Tag="ParRadButt4"/>
+						</StackPanel>
+					</GroupBox>
+					<GroupBox Grid.Row="1" Header="Настройка графов:" Margin="5">
+						<StackPanel>
+							<TextBlock Margin="5" Text="Размерность матрицы смежности:"/>
+							<StackPanel Margin="5" Orientation="Horizontal">
+								<Slider Name="DimensionSlider4" Width="170"
+										Minimum="5" Maximum="10" Value="5"
+										SmallChange="1" LargeChange="1"
+										TickFrequency="1" TickPlacement="TopLeft"
+										IsSnapToTickEnabled="True"/>
+								<TextBox Name="DimensionTextBox4" Width="40" TextAlignment="Center"
+										 IsReadOnly="True"
+										 Text="{Binding ElementName=DimensionSlider4, Path=Value}"/>
+							</StackPanel>
+							<Button Name="SetGraphsButton4" Height="25" Width="200"
+									Content="Сформировать графы" Click="SetGraphsButton4_Click"/>
+						</StackPanel>
+					</GroupBox>
+					<GroupBox Grid.Row="2" Header="Граф сильно связный?" Margin="5">
+						<TextBlock Text="" HorizontalAlignment="Left" Name="IsStronglyConnectedGraphTextBlock" Margin="5" VerticalAlignment="Top"
+								   Width="{Binding ElementName=SetGraphsButton4, Path=ActualWidth}"/>
+					</GroupBox>
+					<GroupBox Grid.Row="3" Header="Время выполнения:" Margin="5">
+						<StackPanel>
+							<StackPanel Margin="5" Orientation="Horizontal">
+								<TextBlock Text="Послед:"/>
+								<TextBlock Text="" HorizontalAlignment="Left" Name="TimesTextBlock1" VerticalAlignment="Top"
+								   Width="{Binding ElementName=SetGraphsButton4, Path=ActualWidth}"/>
+							</StackPanel>
+							<StackPanel Margin="5" Orientation="Horizontal">
+								<TextBlock Text="Параллел: "/>
+								<TextBlock Text="" HorizontalAlignment="Left" Name="TimesParallelTextBlock1" VerticalAlignment="Top"
+								   Width="{Binding ElementName=SetGraphsButton4, Path=ActualWidth}"/>
+							</StackPanel>
+						</StackPanel>
+					</GroupBox>
+				</Grid>
+				<Grid Grid.Column="1">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="100*"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Grid.Row="0" HorizontalAlignment="Center"  Grid.ColumnSpan="2"
+					   Margin="5" Text="Матрица смежности графа G"/>
+					<DataGrid Name="Graph1DataGrid4" Grid.Row="1" Grid.ColumnSpan="2"
+					  Style="{StaticResource DataGridStyle}"/>
+					
+					<TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center"
+					   Margin="5" Text="Прямое транзитивное замыкание для x1"/>
+					<TextBox Name="DirectTransitiveClosureTextBox" Grid.Row="3" Grid.Column="0"
+							 Margin="5" IsReadOnly="True" TextWrapping="WrapWithOverflow"/>
+
+					<TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center"
+								Margin="5" Text="Обрантое транзитивное замыкание для x1"/>
+					<TextBox Name="ReverseTransitiveClosureTextBox" Grid.Row="3" Grid.Column="1"
+							 Margin="5" IsReadOnly="True" TextWrapping="WrapWithOverflow"/>
+				</Grid>
+			</Grid>
+		</TabItem>
+
+		<!--Лабораторная работа 5-->
+		<TabItem Header="Лаб 5">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Grid Grid.Column="0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<GroupBox Grid.Row="0" Header="Настройка:" Margin="5">
+						<StackPanel>
+							<RadioButton Name="SequentialRadioButton5" Content="Послед" IsChecked="True" Checked="RadioButtons4_Checked" Tag="SeqRadButt4"/>
+							<RadioButton Name="ParallelRadioButton5" Content="Параллел" IsChecked="False" Checked="RadioButtons4_Checked" Tag="ParRadButt4"/>
+						</StackPanel>
+					</GroupBox>
+					<GroupBox Grid.Row="1" Header="Настройка графов:" Margin="5">
+						<StackPanel>
+							<TextBlock Margin="5" Text="Размерность матрицы смежности:"/>
+							<StackPanel Margin="5" Orientation="Horizontal">
+								<Slider Name="DimensionSlider5" Width="170"
+							Minimum="5" Maximum="10" Value="5"
+							SmallChange="1" LargeChange="1"
+							TickFrequency="1" TickPlacement="TopLeft"
+							IsSnapToTickEnabled="True"/>
+								<TextBox Name="DimensionTextBox5" Width="20" TextAlignment="Center"
+								 IsReadOnly="True"
+								 Text="{Binding ElementName=DimensionSlider5, Path=Value}"/>
+							</StackPanel>
+							<Button Name="SetGraphsButton5" Margin="5" Height="25"
+						Content="Сформировать графы" Click="SetGraphsButton5_Click"/>
+						</StackPanel>
+					</GroupBox>
+					<GroupBox Grid.Row="2" Header="Время выполнения:" Margin="5">
+						<StackPanel>
+							<StackPanel Margin="5" Orientation="Horizontal">
+								<TextBlock Text="Послед:"/>
+								<TextBlock Text="" HorizontalAlignment="Left" Name="TimesTextBlock2" VerticalAlignment="Top"
+								   Width="{Binding ElementName=SetGraphsButton4, Path=ActualWidth}"/>
+							</StackPanel>
+							<StackPanel Margin="5" Orientation="Horizontal">
+								<TextBlock Text="Параллел: "/>
+								<TextBlock Text="" HorizontalAlignment="Left" Name="TimesParallelTextBlock2" VerticalAlignment="Top"
+								   Width="{Binding ElementName=SetGraphsButton4, Path=ActualWidth}"/>
+							</StackPanel>
+						</StackPanel>
+					</GroupBox>
+				</Grid>
+				<Grid Grid.Column="1">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center"
+					   Margin="5" Text="Граф G1"/>
+					<DataGrid Name="Graph1DataGrid5" Grid.Row="1" Grid.Column="0"
+					  Style="{StaticResource DataGridStyle}"/>
+					<TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center"
+					   Margin="5" Text="Граф G2"/>
+					<DataGrid Name="Graph2DataGrid5" Grid.Row="1" Grid.Column="1"
+					  Style="{StaticResource DataGridStyle}"/>
+					<TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center"
+					   Margin="5" Text="Граф G3 = G1 ⋂ G2"/>
+					<DataGrid Name="Graph3DataGrid5" Grid.Row="1"
+					  Grid.Column="2" Style="{StaticResource DataGridStyle}"/>
+					<TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center"
+					   Margin="5" Text="Матрица R для графа G3"/>
+					<DataGrid Name="Graph4DataGrid5" Grid.Row="3"
+					  Grid.Column="0" Style="{StaticResource DataGridStyle}"/>
+					<TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center"
+					   Margin="5" Text="Матрица Q для графа G3"/>
+					<DataGrid Name="Graph5DataGrid5" Grid.Row="3"
+					  Grid.Column="1" Style="{StaticResource DataGridStyle}"/>
+					<TextBlock Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center"
+					   Margin="5" Text="Матрица C = R ∧ Q"/>
+					<DataGrid Name="Graph6DataGrid5" Grid.Row="3"
+					  Grid.Column="2" Style="{StaticResource DataGridStyle}"/>
+					<TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Center"
+					   Margin="5" Text="Блочнодиагональная матрица максимально сильно связных подграфов"/>
+					<DataGrid Name="Graph7DataGrid5" Grid.Row="5"
+					  Grid.Column="1" Style="{StaticResource DataGridStyle}"/>
+				</Grid>
+			</Grid>
+		</TabItem>
+		<TabItem Header="Лаб 6">
+			<Button Name="Button6" Content="Жопа" Click="Button6_Click"/>
+		</TabItem>
+	</TabControl>
+</Window>
